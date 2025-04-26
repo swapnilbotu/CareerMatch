@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Career Match - Find Your Perfect Career Path{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center text-center">
+        <div class="col-md-8">
+            <h1 class="display-4 mb-4">Find Your Perfect Career Match</h1>
+            <p class="lead mb-5">Discover career paths that align with your interests, skills, and personality through our interactive quiz and AI-powered guidance.</p>
+            
+            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center mb-5">
+                <a href="/quiz" class="btn btn-primary btn-lg px-4">Take Career Quiz</a>
+                <a href="{{ url_for('chatbot', career='general') }}" class="btn btn-outline-primary btn-lg px-4">Chat with Career Bot</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row g-4 py-5">
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title">Career Quiz</h3>
+                    <p class="card-text">Take our comprehensive quiz to discover career paths that match your interests, skills, and personality.</p>
+                    <a href="/quiz" class="btn btn-primary">Start Quiz</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title">Career Explorer</h3>
+                    <p class="card-text">Explore detailed information about various careers, including required skills, education, and job outlook.</p>
+                    <a href="/career/software-engineer" class="btn btn-primary">Explore Careers</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title">Career Bot</h3>
+                    <p class="card-text">Have a conversation with our AI career advisor to get personalized guidance and answers to your career questions.</p>
+                    <a href="{{ url_for('chatbot', career='general') }}" class="btn btn-primary">Chat Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

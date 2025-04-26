@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}CareerPath Navigator - Volunteer Opportunities{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/career/{{ career }}">{{ career }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Volunteer Opportunities</li>
+            </ol>
+        </nav>
+        
+        <h1 class="mb-4">Volunteer Opportunities for {{ career }}</h1>
+        
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h2 class="card-title">Search by Location</h2>
+                <form action="/volunteer" method="GET" class="row g-3">
+                    <input type="hidden" name="career" value="{{ career }}">
+                    <div class="col-md-8">
+                        <label for="zip_code" class="form-label">Enter your ZIP code</label>
+                        <input type="text" class="form-control" id="zip_code" name="zip_code" value="{{ zip_code }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="radius" class="form-label">Search radius (miles)</label>
+                        <select class="form-select" id="radius" name="radius">
+                            <option value="10" {% if radius == 10 %}selected{% endif %}>10 miles</option>
+                            <option value="25" {% if radius == 25 %}selected{% endif %}>25 miles</option>
+                            <option value="50" {% if radius == 50 %}selected{% endif %}>50 miles</option>
+                            <option value="100" {% if radius == 100 %}selected{% endif %}>100 miles</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        {% if zip_code %}
+        <h2 class="mb-4">Opportunities near {{ zip_code }}</h2>
+        
+        {% if opportunities %}
+        <div class="row">
+            {% for opportunity in opportunities %}
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h3 class="card-title">{{ opportunity.title }}</h3>
+                        <h5 class="card-subtitle mb-2 text-muted">{{ opportunity.organization }}</h5>
+                        <p class="card-text">{{ opportunity.description }}</p>
+                        <ul class="list-group list-group-flush mb-3">
+                            <li class="list-group-item"><strong>Location:</strong> {{ opportunity.location }}</li>
+                            <li class="list-group-item"><strong>Age Requirement:</strong> {{ opportunity.age_requirement }}</li>
+                            <li class="list-group-item"><strong>Time Commitment:</strong> {{ opportunity.commitment }}</li>
+                        </ul>
+                        <div class="d-grid">
+                            <a href="#" class="btn btn-outline-primary">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <p>No volunteer opportunities found for {{ career }} near {{ zip_code }}. Try expanding your search radius or check back later.</p>
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 
