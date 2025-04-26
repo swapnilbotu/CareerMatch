@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Career Match - Tech Career Quiz{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1 class="mb-4">Tech Career Quiz</h1>
+            <p class="lead mb-4">Discover which tech career path might be the best fit for you based on your interests, skills, and preferences.</p>
+            
+            <form action="{{ url_for('quiz') }}" method="post" class="needs-validation" novalidate>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Programming Interests</h5>
+                        <p class="card-text">What aspects of programming interest you the most?</p>
+                        <div class="mb-3">
+                            <select name="interests" class="form-select" required>
+                                <option value="">Select your primary interest...</option>
+                                <option value="web">Web Development (Frontend/Backend)</option>
+                                <option value="mobile">Mobile App Development</option>
+                                <option value="ai">Artificial Intelligence & Machine Learning</option>
+                                <option value="data">Data Science & Analytics</option>
+                                <option value="game">Game Development</option>
+                                <option value="security">Cybersecurity</option>
+                                <option value="cloud">Cloud Computing & DevOps</option>
+                                <option value="embedded">Embedded Systems & IoT</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Technical Skills</h5>
+                        <p class="card-text">Which technical skills do you already have or are interested in learning?</p>
+                        <div class="mb-3">
+                            <select name="skills" class="form-select" required>
+                                <option value="">Select your strongest skill...</option>
+                                <option value="frontend">Frontend (HTML, CSS, JavaScript)</option>
+                                <option value="backend">Backend (Python, Java, Node.js)</option>
+                                <option value="database">Databases (SQL, NoSQL)</option>
+                                <option value="algorithms">Algorithms & Data Structures</option>
+                                <option value="networking">Networking & Security</option>
+                                <option value="ui">UI/UX Design</option>
+                                <option value="mobile">Mobile Development</option>
+                                <option value="ai">AI/ML Technologies</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Problem-Solving Style</h5>
+                        <p class="card-text">How do you prefer to approach technical problems?</p>
+                        <div class="mb-3">
+                            <select name="strengths" class="form-select" required>
+                                <option value="">Select your approach...</option>
+                                <option value="analytical">Analytical & Systematic</option>
+                                <option value="creative">Creative & Innovative</option>
+                                <option value="practical">Practical & Solution-Oriented</option>
+                                <option value="research">Research & Experimentation</option>
+                                <option value="collaborative">Collaborative & Team-Based</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Work Environment</h5>
+                        <p class="card-text">What's your ideal work environment?</p>
+                        <div class="mb-3">
+                            <select name="personality" class="form-select" required>
+                                <option value="">Select your preference...</option>
+                                <option value="startup">Startup (Fast-paced, innovative)</option>
+                                <option value="enterprise">Enterprise (Structured, established)</option>
+                                <option value="remote">Remote/Freelance (Flexible, independent)</option>
+                                <option value="research">Research/Academic (Theoretical, innovative)</option>
+                                <option value="agency">Agency (Client-focused, diverse projects)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">Get Career Recommendations</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 
