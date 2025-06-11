@@ -285,11 +285,11 @@ def get_volunteer_opportunities(career, zip_code, radius):
         # In a production environment, this would be replaced with actual API calls to volunteer platforms
         return [
             {
-                "title": f"Volunteer {career} Assistant",
+            "title": f"Volunteer {career} Assistant",
                 "organization": "Local Tech Community Center",
                 "description": f"Help with {career} related activities and projects. Great opportunity to gain hands-on experience and build your portfolio.",
                 "location": f"Within {radius} miles of {zip_code}",
-                "age_requirement": "16+",
+            "age_requirement": "16+",
                 "commitment": "4-8 hours/week",
                 "link": volunteer_link
             },
@@ -309,7 +309,7 @@ def get_volunteer_opportunities(career, zip_code, radius):
                 "location": "Remote",
                 "age_requirement": "18+",
                 "commitment": "Flexible",
-                "link": volunteer_link
+            "link": volunteer_link
             }
         ]
     except Exception as e:

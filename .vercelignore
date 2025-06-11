@@ -1,3 +1,4 @@
+# Development files
 __pycache__/
 *.pyc
 *.pyo
@@ -7,12 +8,23 @@ env/
 venv/
 .env
 .venv
-test/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Non-essential folders
 VideoPresentation/
+
+# Git files
 .git
 .gitignore
+
+# IDE files
 .vscode/
 .idea/
+*.swp
+*.swo
+
+# Large data files (only exclude if not needed by app)
 *.csv
 *.xlsx
 *.db
