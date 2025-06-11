@@ -47,5 +47,198 @@
             </div>
         </div>
     </div>
+
+    <!-- Progress Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title mb-4">Your Progress</h3>
+                    
+                    <!-- Progress Overview -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="progress mb-3">
+                                {% set progress_percentage = (progress.badges|length / all_badges|length * 100)|round %}
+                                <div class="progress-bar" role="progressbar" style="width: {{ progress_percentage }}%"
+                                     aria-valuenow="{{ progress_percentage }}" aria-valuemin="0" aria-valuemax="100">
+                                    {{ progress_percentage }}%
+                                </div>
+                            </div>
+                            <p class="text-muted">
+                                You've earned {{ progress.badges|length }} out of {{ all_badges|length }} badges!
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="timeline">
+                                <div class="timeline-item">
+                                    <span class="timeline-icon">🎯</span>
+                                    <span class="timeline-text">Take the Career Quiz</span>
+                                    {% if 'quiz_completed' in progress.badges %}
+                                    <span class="badge bg-success">Completed</span>
+                                    {% endif %}
+                                </div>
+                                <div class="timeline-item">
+                                    <span class="timeline-icon">💬</span>
+                                    <span class="timeline-text">Chat with Career Advisor</span>
+                                    {% if 'chat_engaged' in progress.badges %}
+                                    <span class="badge bg-success">Completed</span>
+                                    {% endif %}
+                                </div>
+                                <div class="timeline-item">
+                                    <span class="timeline-icon">📚</span>
+                                    <span class="timeline-text">Research Careers</span>
+                                    {% if 'career_researched' in progress.badges %}
+                                    <span class="badge bg-success">Completed</span>
+                                    {% endif %}
+                                </div>
+                                <div class="timeline-item">
+                                    <span class="timeline-icon">🔍</span>
+                                    <span class="timeline-text">Find Opportunities</span>
+                                    {% if 'opportunity_found' in progress.badges %}
+                                    <span class="badge bg-success">Completed</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Badges Collection -->
+                    <div class="row">
+                        {% set badge_order = ['quiz_completed', 'chat_engaged', 'career_researched', 'opportunity_found'] %}
+                        {% for badge_id in badge_order %}
+                        {% set badge = all_badges[badge_id] %}
+                        <div class="col-md-3 mb-4">
+                            {% if badge_id == 'quiz_completed' %}
+                                <a href="{{ url_for('quiz') }}" class="text-decoration-none">
+                            {% elif badge_id == 'chat_engaged' %}
+                                <a href="{{ url_for('chatbot', career='general') }}" class="text-decoration-none">
+                            {% elif badge_id == 'career_researched' %}
+                                <a href="{{ url_for('career_explorer') }}" class="text-decoration-none">
+                            {% elif badge_id == 'opportunity_found' %}
+                                <a href="#opportunityModal" data-bs-toggle="modal" class="text-decoration-none">
+                            {% endif %}
+                            <div class="card h-100 {% if badge_id in progress.badges %}border-success{% else %}border-secondary{% endif %}">
+                                <div class="card-body text-center">
+                                    <div class="badge-icon mb-3" style="font-size: 3rem;">
+                                        {{ badge.icon }}
+                                    </div>
+                                    <h5 class="card-title">{{ badge.name }}</h5>
+                                    <p class="card-text">{{ badge.description }}</p>
+                                    {% if badge_id in progress.badges %}
+                                    <span class="badge bg-success">Earned!</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">Not Earned</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if badge_id in ['quiz_completed', 'chat_engaged', 'career_researched', 'opportunity_found'] %}
+                                </a>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mock Opportunities Near You Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h2 class="mb-4 text-center">Opportunities Near You</h2>
+            <div class="row justify-content-center">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Volunteer: Coding Mentor</h5>
+                            <p class="card-text">Help teach coding to middle and high school students at your local library or community center.</p>
+                            <span class="badge bg-success mb-2">Volunteer</span>
+                            <div class="d-grid">
+                                <a href="#" class="btn btn-outline-primary disabled">Apply</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Internship: City Hall Tech Intern</h5>
+                            <p class="card-text">Work with the city's IT department on real-world projects and gain valuable experience.</p>
+                            <span class="badge bg-info mb-2">Internship</span>
+                            <div class="d-grid">
+                                <a href="#" class="btn btn-outline-primary disabled">Apply</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">STEM Club: Robotics Club</h5>
+                            <p class="card-text">Join your local high school robotics club to build, code, and compete in robotics challenges.</p>
+                            <span class="badge bg-warning text-dark mb-2">STEM Club</span>
+                            <div class="d-grid">
+                                <a href="#" class="btn btn-outline-primary disabled">Join</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Opportunity Seeker Modal -->
+<div class="modal fade" id="opportunityModal" tabindex="-1" aria-labelledby="opportunityModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="opportunityModalLabel">How to Earn the Opportunity Seeker Badge</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>To earn the Opportunity Seeker badge, first choose a career that interests you in the Career Explorer. Then, on the career details page, look for the "Find Volunteer Opportunities" section and search for volunteering opportunities related to that career. This will help you gain real-world experience and unlock the badge!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.timeline {
+    position: relative;
+    padding: 20px 0;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 40px;
+    margin-bottom: 20px;
+}
+
+.timeline-icon {
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 1.5rem;
+}
+
+.timeline-text {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.badge-icon {
+    opacity: {% if badge_id in progress.badges %}1{% else %}0.5{% endif %};
+}
+
+.opacity-50 {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+</style>
 {% endblock %} 

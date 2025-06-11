@@ -1,5 +1,5 @@
 /**
- * CareerPath Navigator - Main JavaScript
+ * Career Match - Main JavaScript
  */
 
 document.addEventListener('DOMContentLoaded', function() {

@@ -38,17 +38,66 @@
             
             <div class="card mb-4">
                 <div class="card-body">
-                    <h5 class="card-title">Required Skills</h5>
+                    <h5 class="card-title">Key Skills</h5>
+                    {% set key_skills_map = {
+                        'Software Developer': [
+                            'Python', 'Java', 'Version Control (Git)', 'Unit Testing', 'Agile Methodologies',
+                            'Problem-solving', 'Object-Oriented Programming'
+                        ],
+                        'Data Scientist': [
+                            'Python', 'Pandas', 'NumPy', 'Machine Learning', 'Data Visualization', 'SQL', 'Statistics',
+                            'Model Deployment (Flask, FastAPI, Docker)', 'Communication'
+                        ],
+                        'Machine Learning Engineer': [
+                            'Python', 'Machine Learning Algorithms', 'Data Preprocessing & Feature Engineering',
+                            'Scikit-learn, TensorFlow, or PyTorch', 'Model Evaluation & Validation',
+                            'Data Visualization (Matplotlib, Seaborn)', 'Model Deployment',
+                            'Cloud ML Platforms (AWS SageMaker, GCP AI Platform)', 'Experiment Tracking (MLflow, Weights & Biases)'
+                        ],
+                        'Mobile App Developer': [
+                            'Swift (iOS)', 'Kotlin (Android)', 'Flutter', 'Mobile UI Design', 'REST APIs',
+                            'App Deployment', 'UI/UX Principles'
+                        ],
+                        'Game Developer': [
+                            'Unity or Unreal Engine', 'C# or C++', 'Game Physics', '3D Modeling', 'Shader Programming',
+                            'Team Collaboration'
+                        ],
+                        'Cybersecurity Analyst': [
+                            'Network Security', 'Penetration Testing', 'SIEM Tools', 'Incident Response', 'Linux',
+                            'Firewalls', 'Security Auditing'
+                        ],
+                        'Web Developer': [
+                            'HTML', 'CSS', 'JavaScript', 'React or Angular', 'REST APIs', 'Responsive Design',
+                            'Version Control (Git)'
+                        ],
+                        'AI Engineer': [
+                            'Python', 'TensorFlow or PyTorch', 'Deep Learning', 'Natural Language Processing',
+                            'Model Deployment', 'Linear Algebra', 'Cloud ML Platforms'
+                        ],
+                        'Cloud Engineer': [
+                            'AWS or Azure', 'Docker', 'Kubernetes', 'Infrastructure as Code', 'CI/CD',
+                            'Cloud Security'
+                        ],
+                        'Embedded Systems Engineer': [
+                            'C/C++', 'Microcontrollers', 'RTOS', 'PCB Design', 'Embedded Linux',
+                            'Electronics Basics'
+                        ]
+                    } %}
                     <ul class="list-unstyled">
-                        {% if career_data.daily_tasks %}
+                        {% set key_skills = key_skills_map.get(career) %}
+                        {% if key_skills %}
+                            {% for skill in key_skills %}
+                                <li class="mb-2"><span class="text-primary">&#9679;</span> {{ skill }}</li>
+                            {% endfor %}
+                        {% elif career_data.daily_tasks %}
                             {% for task in career_data.daily_tasks %}
-                                <li class="mb-2">{{ task }}</li>
+                                <li class="mb-2"><span class="text-primary">&#9679;</span> {{ task }}</li>
                             {% endfor %}
                         {% else %}
-                            <li class="mb-2">Programming languages (varies by specialization)</li>
-                            <li class="mb-2">Problem-solving skills</li>
-                            <li class="mb-2">Team collaboration</li>
-                            <li class="mb-2">Continuous learning</li>
+                            <li class="mb-2"><span class="text-primary">&#9679;</span> Problem-solving</li>
+                            <li class="mb-2"><span class="text-primary">&#9679;</span> Basic programming (Python or Java)</li>
+                            <li class="mb-2"><span class="text-primary">&#9679;</span> Teamwork</li>
+                            <li class="mb-2"><span class="text-primary">&#9679;</span> Communication</li>
                         {% endif %}
                     </ul>
                 </div>
@@ -67,6 +116,70 @@
                             <li class="mb-2">Online courses (Coursera, Udemy, edX)</li>
                             <li class="mb-2">Industry certifications</li>
                         {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Next Steps Section -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Next Steps</h5>
+                    {% set next_steps_map = {
+                        'Software Developer': [
+                            'Take AP Computer Science or Intro to Python',
+                            'Build a project (see <a href="https://github.com/topics/python-project" target="_blank">GitHub ideas</a>)',
+                            'Join a coding club or hackathon'
+                        ],
+                        'Data Scientist': [
+                            'Learn Python and basic statistics',
+                            'Complete a data analysis project (see <a href="https://github.com/topics/data-science-project" target="_blank">GitHub ideas</a>)',
+                            'Take an online course (Coursera, edX, or Khan Academy)'
+                        ],
+                        'Mobile App Developer': [
+                            'Learn Swift (iOS) or Kotlin (Android)',
+                            'Build a simple app and publish it',
+                            'Explore free resources on <a href="https://developer.android.com/courses" target="_blank">Android</a> or <a href="https://developer.apple.com/tutorials/" target="_blank">Apple</a>'
+                        ],
+                        'Game Developer': [
+                            'Try Unity or Unreal Engine tutorials',
+                            'Build a simple game and share it online',
+                            'Join a game jam or online dev community'
+                        ],
+                        'Cybersecurity Analyst': [
+                            'Take a cybersecurity basics course (e.g., Cybrary, TryHackMe)',
+                            'Participate in a Capture the Flag (CTF) event',
+                            'Follow security news and blogs'
+                        ],
+                        'Web Developer': [
+                            'Learn HTML, CSS, and JavaScript',
+                            'Build a personal website or portfolio',
+                            'Contribute to open source on GitHub'
+                        ],
+                        'AI Engineer': [
+                            'Take an online AI/ML course (Coursera, Fast.ai)',
+                            'Experiment with TensorFlow or PyTorch',
+                            'Join an AI club or competition'
+                        ],
+                        'Cloud Engineer': [
+                            'Learn about AWS, Azure, or Google Cloud',
+                            'Deploy a simple app to the cloud',
+                            'Get a cloud fundamentals certification'
+                        ],
+                        'Embedded Systems Engineer': [
+                            'Try Arduino or Raspberry Pi projects',
+                            'Learn C/C++ basics',
+                            'Join a robotics or maker club'
+                        ]
+                    } %}
+                    <ul class="list-unstyled">
+                        {% set steps = next_steps_map.get(career, [
+                            'Take an introductory course related to this field',
+                            'Build a small project or join a club',
+                            'Look for summer programs or online resources'
+                        ]) %}
+                        {% for step in steps %}
+                        <li class="mb-2"><span class="text-success">&#10003;</span> {{ step|safe }}</li>
+                        {% endfor %}
                     </ul>
                 </div>
             </div>

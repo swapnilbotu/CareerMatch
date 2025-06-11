@@ -73,10 +73,31 @@
                     {% endfor %}
                 {% endif %}
             </div>
-            
+
+            <!-- Starter Prompts -->
+            <div class="mb-3">
+                <div class="d-flex flex-wrap gap-2 justify-content-center">
+                    {% set interest_prompt_map = {
+                        'web': 'What skills do I need to become a web developer?',
+                        'mobile': 'What skills do I need to become a mobile app developer?',
+                        'ai': 'What skills do I need to become an AI engineer?',
+                        'data': 'What skills do I need to become a data scientist?',
+                        'game': 'What skills do I need to become a game developer?',
+                        'security': 'What skills do I need to become a cybersecurity analyst?',
+                        'cloud': 'What skills do I need to become a cloud engineer?',
+                        'embedded': 'What skills do I need to become an embedded systems engineer?'
+                    } %}
+                    <button type="button" class="btn btn-outline-secondary starter-prompt">
+                        {{ interest_prompt_map.get(session.get('programming_interest', ''), 'What skills do I need to become a data scientist?') }}
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary starter-prompt">How can I get into AI with no experience?</button>
+                    <button type="button" class="btn btn-outline-secondary starter-prompt">What should I do in high school to prep for tech?</button>
+                </div>
+            </div>
+
             <form action="{{ url_for('chatbot', career=career, session_id=session.get('session_id', '')) }}" method="post" class="mb-4">
                 <div class="input-group">
-                    <input type="text" name="message" class="form-control" placeholder="Type your message here..." required>
+                    <input type="text" name="message" class="form-control" placeholder="Type your message here..." required id="chatInput">
                     <button type="submit" class="btn btn-primary">Send</button>
                 </div>
             </form>
@@ -95,6 +116,14 @@
     document.addEventListener('DOMContentLoaded', function() {
         var chatContainer = document.getElementById('chatContainer');
         chatContainer.scrollTop = chatContainer.scrollHeight;
+
+        // Starter prompt button click handler
+        document.querySelectorAll('.starter-prompt').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.getElementById('chatInput').value = btn.textContent;
+                document.getElementById('chatInput').focus();
+            });
+        });
     });
 </script>
 {% endblock %} 

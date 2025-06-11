@@ -4,9 +4,6 @@ Utility functions for the CareerPath Navigator application.
 
 import os
 import requests
-import re
-from geopy.geocoders import Nominatim
-from geopy.distance import geodesic
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -17,16 +14,6 @@ class CareerMatch:
         self.base_url = 'https://api.careeronestop.org/v1/occupation/'
         self.user_id = os.getenv('CAREER_USER_ID')
         self.token = os.getenv('CAREER_API_TOKEN')
-
-    def is_valid_zip(self, zipcode):
-        """Check if the given zip code is valid."""
-        return bool(re.match(r'^\d{5}(-\d{4})?$', zipcode))
-
-    def validate_zip_with_api(self, zipcode):
-        """Check if the zip code corresponds to a real location using an external API."""
-        url = f"http://api.zippopotam.us/us/{zipcode}"
-        response = requests.get(url)
-        return response.status_code == 200
 
     def find_career(self, keyword):
         """Search for careers based on a keyword."""
@@ -58,17 +45,13 @@ class CareerMatch:
 
         try:
             response = requests.get(videos_url, headers=headers)
-            print(f"Video API response status: {response.status_code}")  # Debug print
-            
             if response.status_code == 200:
                 data = response.json()
-                print(f"Video API response data: {data}")  # Debug print
                 videos = data.get("Videos", [])
                 if videos and len(videos) > 0:
-                    # Get the full video URL
                     video = videos[0]
                     if video.get("URL"):
-                        return video.get("URL")  # Return the full video URL
+                        return video.get("URL")
             return None
         except Exception as e:
             print(f"Error fetching videos: {str(e)}")
@@ -76,9 +59,7 @@ class CareerMatch:
 
     def get_career_data(self, onetID, location):
         """Get detailed information about a specific career."""
-        # First try to get videos from dedicated endpoint
         video_url = self.get_career_videos(onetID)
-        print(f"Got video URL from dedicated endpoint: {video_url}")  # Debug print
 
         occupation_url = f'{self.base_url}{self.user_id}/{onetID}/{location}'
         
@@ -166,14 +147,12 @@ class CareerMatch:
                 # Try alternate video source if primary not available
                 if not video_url:
                     video_url = occupation_detail.get("COSVideoURL")
-                    print(f"Using alternate video URL: {video_url}")  # Debug print
 
                 # If still no video, try getting from multimedia
                 if not video_url and occupation_detail.get("Multimedia"):
                     multimedia = occupation_detail.get("Multimedia", [])
                     if multimedia and len(multimedia) > 0:
                         video_url = multimedia[0].get("URL")
-                        print(f"Using multimedia URL: {video_url}")  # Debug print
 
                 return {
                     "title": occupation_detail.get("OnetTitle"),
@@ -184,47 +163,95 @@ class CareerMatch:
                     "growth_potential": str(occupation_detail.get("BrightOutlook")) + ". This job is/has " + str(occupation_detail.get("BrightOutlookCategory")) + " in employment.",
                     "growth_projections": statement,
                     "related_careers": relatedCareers,
-                    "training_programs": occupation_detail.get("TrainingPrograms", [])[:10],
+                    "training_programs": [
+                        "Data Science Bootcamp (e.g., DataCamp, Springboard)",
+                        "Machine Learning Specialization (Coursera)",
+                        "Data Engineering Certification (AWS, Google Cloud)",
+                        "Python for Data Science (DataCamp)",
+                        "SQL and Database Management",
+                        "Big Data Technologies (Hadoop, Spark)",
+                        "Data Visualization (Tableau, Power BI)",
+                        "Statistical Analysis and Mathematics",
+                        "Deep Learning Specialization",
+                        "Cloud Data Platforms (AWS, Azure, GCP)"
+                    ] if "data" in occupation_detail.get("OnetTitle", "").lower() or "machine learning" in occupation_detail.get("OnetTitle", "").lower() else occupation_detail.get("TrainingPrograms", [])[:10],
                     "volunteer_link": volunteer_link,
                     "video_url": video_url
                 }
 
         return None
 
-    def get_certifications(self, occupation_title):
-        """Get certifications for a specific occupation."""
-        certifications_url = f'https://api.careeronestop.org/v1/certificationfinder/{self.user_id}/{occupation_title}/0/0/0/0/0/0/0/0/0/5'
-        
-        headers = {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + self.token
-        }
-
-        response = requests.get(certifications_url, headers=headers)
-
-        if response.status_code == 200:
-            certifications = response.json()
-            return certifications.get("CertList", [])
-        else:
-            print(f"Error fetching certification details: {response.status_code}")
-            return []
-
 # Create a global instance of CareerMatch
 career_match = CareerMatch()
+
+# Add this after the career_match initialization
+TECH_CAREERS = [
+    "Software Developer",
+    "Data Scientist",
+    "Machine Learning Engineer",
+    "DevOps Engineer",
+    "Cloud Architect",
+    "Cybersecurity Analyst",
+    "Full Stack Developer",
+    "Mobile App Developer",
+    "UI/UX Designer",
+    "Game Developer",
+    "Blockchain Developer",
+    "AI Research Scientist",
+    "Systems Administrator",
+    "Network Engineer",
+    "Database Administrator",
+    "Quality Assurance Engineer",
+    "Technical Product Manager",
+    "IT Project Manager",
+    "Robotics Engineer",
+    "Computer Vision Engineer",
+    "Natural Language Processing Engineer",
+    "Embedded Systems Engineer",
+    "IoT Solutions Architect",
+    "AR/VR Developer",
+    "Quantum Computing Engineer"
+]
 
 def get_career_recommendations(interests, strengths, skills, personality):
     """Get career recommendations based on user inputs."""
     try:
-        # Combine all inputs into a search query
+        # First, get API-based recommendations
         search_query = f"{interests} {strengths} {skills} {personality}"
-        careers = career_match.find_career(search_query)
+        api_careers = career_match.find_career(search_query)
         
-        if careers:
-            return [career["OnetTitle"] for career in careers]
-        return []
+        # Initialize results with tech careers
+        recommended_careers = TECH_CAREERS.copy()
+        
+        # Add API-based careers if they exist
+        if api_careers:
+            api_career_titles = [career["OnetTitle"] for career in api_careers]
+            # Add unique API careers to our list
+            for career in api_career_titles:
+                if career not in recommended_careers:
+                    recommended_careers.append(career)
+        
+        # Filter for tech-related careers
+        tech_keywords = [
+            'software', 'programming', 'developer', 'engineer', 'data', 'security',
+            'cloud', 'devops', 'ai', 'machine learning', 'cyber', 'web', 'mobile',
+            'computer', 'information', 'technology', 'system', 'network', 'database',
+            'application', 'code', 'digital', 'technical', 'robotics', 'automation',
+            'blockchain', 'quantum', 'virtual', 'augmented', 'reality', 'iot'
+        ]
+        
+        filtered_careers = []
+        for career in recommended_careers:
+            career_lower = career.lower()
+            if any(keyword in career_lower for keyword in tech_keywords):
+                filtered_careers.append(career)
+        
+        # If we have filtered careers, return them; otherwise return the original list
+        return filtered_careers[:7] if filtered_careers else recommended_careers[:7]
+        
     except Exception as e:
         print(f"Error getting career recommendations: {str(e)}")
-        return []
+        return TECH_CAREERS[:7]  # Return top 7 tech careers as fallback
 
 def get_career_data(career_name):
     """Get detailed information about a specific career."""
@@ -238,7 +265,7 @@ def get_career_data(career_name):
         onetCode = careers[0]["OnetCode"]
         
         # Get detailed data using the OnetCode
-        return career_match.get_career_data(onetCode, "10001")  # Default to NYC area if no location specified
+        return career_match.get_career_data(onetCode, "95747")  # Default to my area code if no location specified
     except Exception as e:
         print(f"Error getting career data: {str(e)}")
         return None
@@ -246,12 +273,6 @@ def get_career_data(career_name):
 def get_volunteer_opportunities(career, zip_code, radius):
     """Get volunteer opportunities based on career interest and location."""
     try:
-        if not career_match.is_valid_zip(zip_code):
-            return []
-            
-        if not career_match.validate_zip_with_api(zip_code):
-            return []
-            
         # Get career data to use the title for volunteer search
         career_data = get_career_data(career)
         if not career_data:
@@ -260,124 +281,37 @@ def get_volunteer_opportunities(career, zip_code, radius):
         # Use the volunteer link from career data
         volunteer_link = career_data.get("volunteer_link", "")
         
-        # For now, return a placeholder opportunity
-        return [{
-            "title": f"Volunteer {career} Assistant",
-            "organization": "Local Community Center",
-            "description": f"Help with {career} related activities",
-            "location": f"Near {zip_code}",
-            "age_requirement": "16+",
-            "time_commitment": "4 hours/week",
-            "link": volunteer_link
-        }]
+        # Return a list of sample opportunities
+        # In a production environment, this would be replaced with actual API calls to volunteer platforms
+        return [
+            {
+                "title": f"Volunteer {career} Assistant",
+                "organization": "Local Tech Community Center",
+                "description": f"Help with {career} related activities and projects. Great opportunity to gain hands-on experience and build your portfolio.",
+                "location": f"Within {radius} miles of {zip_code}",
+                "age_requirement": "16+",
+                "commitment": "4-8 hours/week",
+                "link": volunteer_link
+            },
+            {
+                "title": f"{career} Mentorship Program",
+                "organization": "Tech Education Initiative",
+                "description": f"Share your knowledge and mentor aspiring {career}s. Help others learn and grow in the field.",
+                "location": f"Within {radius} miles of {zip_code}",
+                "age_requirement": "18+",
+                "commitment": "2-4 hours/week",
+                "link": volunteer_link
+            },
+            {
+                "title": f"Open Source {career} Contributor",
+                "organization": "Open Source Community",
+                "description": f"Contribute to open source projects related to {career}. Work with a team of developers and make an impact.",
+                "location": "Remote",
+                "age_requirement": "18+",
+                "commitment": "Flexible",
+                "link": volunteer_link
+            }
+        ]
     except Exception as e:
         print(f"Error getting volunteer opportunities: {str(e)}")
-        return []
-
-def get_zip_code_coordinates(zip_code):
-    """
-    Get latitude and longitude coordinates for a zip code.
-    
-    Args:
-        zip_code (str): The zip code to get coordinates for.
-        
-    Returns:
-        tuple: (latitude, longitude) or None if not found.
-    """
-    try:
-        geolocator = Nominatim(user_agent="career_path_navigator")
-        location = geolocator.geocode({"postalcode": zip_code, "country": "US"})
-        
-        if location:
-            return (location.latitude, location.longitude)
-        return None
-    except Exception as e:
-        print(f"Error getting coordinates: {e}")
-        return None
-
-def calculate_distance(lat1, lon1, lat2, lon2):
-    """
-    Calculate the distance between two points using their coordinates.
-    """
-    return geodesic((lat1, lon1), (lat2, lon2)).miles 
-
-def get_all_careers():
-    """
-    Get a list of all available careers with their details.
-    Returns a list of career dictionaries with title, description, category, growth_rate, and avg_salary.
-    """
-    # This is a sample list of careers - in a real application, this would come from an API or database
-    careers = [
-        {
-            'title': 'Software Developer',
-            'description': 'Design and develop software applications and systems. Write clean, efficient code and collaborate with cross-functional teams.',
-            'category': 'Technology',
-            'growth_rate': 25,
-            'avg_salary': 85000
-        },
-        {
-            'title': 'Data Scientist',
-            'description': 'Analyze complex data sets to help organizations make better decisions. Use statistical methods and machine learning algorithms.',
-            'category': 'Technology',
-            'growth_rate': 36,
-            'avg_salary': 95000
-        },
-        {
-            'title': 'Registered Nurse',
-            'description': 'Provide and coordinate patient care, educate patients about health conditions, and maintain medical records.',
-            'category': 'Healthcare',
-            'growth_rate': 15,
-            'avg_salary': 75000
-        },
-        {
-            'title': 'Physical Therapist',
-            'description': 'Help patients recover from injuries and improve their mobility through exercise and hands-on care.',
-            'category': 'Healthcare',
-            'growth_rate': 18,
-            'avg_salary': 82000
-        },
-        {
-            'title': 'High School Teacher',
-            'description': 'Educate students in specific subject areas, prepare lesson plans, and assess student progress.',
-            'category': 'Education',
-            'growth_rate': 8,
-            'avg_salary': 62000
-        },
-        {
-            'title': 'School Counselor',
-            'description': 'Help students develop academic and social skills, provide career guidance, and address personal issues.',
-            'category': 'Education',
-            'growth_rate': 10,
-            'avg_salary': 58000
-        },
-        {
-            'title': 'Marketing Manager',
-            'description': 'Plan and execute marketing campaigns, analyze market trends, and manage marketing budgets.',
-            'category': 'Business',
-            'growth_rate': 10,
-            'avg_salary': 78000
-        },
-        {
-            'title': 'Financial Analyst',
-            'description': 'Analyze financial data, prepare reports, and make investment recommendations.',
-            'category': 'Business',
-            'growth_rate': 9,
-            'avg_salary': 85000
-        },
-        {
-            'title': 'Environmental Scientist',
-            'description': 'Study environmental problems and develop solutions to protect the environment and human health.',
-            'category': 'Science',
-            'growth_rate': 8,
-            'avg_salary': 72000
-        },
-        {
-            'title': 'Civil Engineer',
-            'description': 'Design and oversee construction projects, including roads, bridges, and buildings.',
-            'category': 'Engineering',
-            'growth_rate': 7,
-            'avg_salary': 88000
-        }
-    ]
-    
-    return careers 
+        return [] 
