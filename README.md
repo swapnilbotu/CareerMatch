@@ -79,7 +79,6 @@ KTHacks_CareerMatch/
 ├── static/             # Static assets
 │   ├── css/           # Stylesheets
 │   ├── js/            # JavaScript files
-└── data/              # Data files
 ```
 
 ## Troubleshooting
